@@ -475,12 +475,12 @@
 
         .welcome-title {
             position: absolute;
-            top: clamp(50px, 8vh, 65px);
+            top: clamp(45px, 7vh, 60px);
             left: 50%;
             transform: translateX(-50%);
             color: #DAA520;
-            font-size: clamp(20px, 3vw, 32px);
-            text-shadow: 0 0 20px rgba(218, 165, 32, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: clamp(22px, 3.5vw, 36px);
+            text-shadow: 0 0 clamp(15px, 2vw, 25px) rgba(218, 165, 32, 0.6), 2px 2px 4px rgba(0, 0, 0, 0.5);
             white-space: nowrap;
         }
     </style>
@@ -767,6 +767,7 @@
                     requestAnimationFrame(animate);
                 } else {
                     element.textContent = end; // Ensure final value is exact
+                    saveStats(); // Auto-save when animation completes
                 }
             };
             
@@ -788,25 +789,18 @@
             const notification = document.getElementById('notification');
             notification.classList.add('show');
 
-            // Animate after 3 seconds
+            // Animate
+            if (coinsAmount >= 0) {
+                animateNumber('coinsDisplay', currentCoins, coinsAmount, 2000);
+            }
+            if (diamondsAmount >= 0) {
+                animateNumber('diamondsDisplay', currentDiamonds, diamondsAmount, 2000);
+            }
+            
+            // Hide notification after staying visible for 3 seconds
             setTimeout(() => {
-                if (coinsAmount >= 0) {
-                    animateNumber('coinsDisplay', currentCoins, coinsAmount, 2000);
-                }
-                if (diamondsAmount >= 0) {
-                    animateNumber('diamondsDisplay', currentDiamonds, diamondsAmount, 2000);
-                }
-                
-                // Save stats after animation completes
-                setTimeout(() => {
-                    saveStats();
-                }, 2100);
-                
-                // Hide notification after staying visible for 3 seconds
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }, 0);
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         function showNotification(message) {
@@ -854,13 +848,8 @@
             // Show notification
             showNotification(`Received ${randomGold} GOLD from Daily Box!`);
             
-            // Animate coins
+            // Animate coins (auto-saves when complete)
             animateNumber('coinsDisplay', currentCoins, newCoins, 2000);
-            
-            // Save stats after animation completes
-            setTimeout(() => {
-                saveStats();
-            }, 2100);
         }
 
         function openHourlyBox() {
@@ -882,13 +871,8 @@
             // Show notification
             showNotification(`Received ${randomGold} GOLD from Hourly Box!`);
             
-            // Animate coins
+            // Animate coins (auto-saves when complete)
             animateNumber('coinsDisplay', currentCoins, newCoins, 2000);
-            
-            // Save stats after animation completes
-            setTimeout(() => {
-                saveStats();
-            }, 2100);
         }
 
         function checkBoxTimers() {
